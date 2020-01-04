@@ -5,15 +5,15 @@
 (def base-url "http://localhost:3000")
 
 (def http-post-fn client/post)
-(def http-get-fn client/get)
+(def http-put-fn client/put)
 
 (defn ->json [text]
   (some-> text
           (json/read-str :key-fn keyword)))
 
-(defn request [http-method-fn req-body]
-  (some-> (http-method-fn (str base-url "/posts") {:form-params req-body :content-type :json})
+(defn request [http-method-fn route req-body]
+  (some-> (http-method-fn (str base-url route) {:form-params req-body :content-type :json})
           (update :body ->json)))
 
 (defn create-post [post]
-  (request http-post-fn post))
+  (request http-post-fn "/posts" post))

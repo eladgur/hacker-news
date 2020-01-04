@@ -23,3 +23,7 @@
                        :votes 0)
        (db/insert! Post)
        (id->created "posts")))
+
+(defn update-handler [id req-body]
+  (db/update! Post id req-body)
+  (ok (assoc req-body :id id)))

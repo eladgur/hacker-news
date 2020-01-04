@@ -16,4 +16,9 @@
   (api {:swagger config/swagger-config}
        [(POST "/posts" http-req
           :body [req-body PostRequestSchema]
-          (handlers/create-handler req-body))]))
+          (handlers/create-handler req-body))
+
+        (PUT "/posts/:id" http-req
+          :path-params [id :- s/Int]
+          :body [req-body PostRequestSchema]
+                (handlers/update-handler id req-body))]))
