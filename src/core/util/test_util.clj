@@ -21,9 +21,20 @@
   (->> (req-body->req-config req-body)
        (client/put r/create-and-update-url)))
 
+(defn upvote [id]
+  (->> (req-body->req-config {:id id})
+       (client/post r/upvote-url)))
+
+(defn downvote [id]
+  (->> (req-body->req-config {:id id})
+       (client/post r/downvote-url)))
+
 (defn create-post [post]
   (let [{:keys [status body]} (create! post)
         post-id (:id body)]
     (is (= status 201))
     post-id))
+
+
+
 
