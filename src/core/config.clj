@@ -1,4 +1,4 @@
-(ns hack-news.config)
+(ns core.config)
 
 (def db-spec
   {:dbtype   "postgres"

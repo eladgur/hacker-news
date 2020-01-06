@@ -1,6 +1,6 @@
-(ns hack-news.core-test
+(ns core.core-test
   (:require [clojure.test :refer :all]
-            [hack-news.core :refer :all]))
+            [core.main :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

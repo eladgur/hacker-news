@@ -1,11 +1,11 @@
-(ns hack-news.core
+(ns core.main
   (:require [ring.adapter.jetty :refer [run-jetty]]
             [toucan.db :as db]
             [toucan.models :as models]
             [compojure.api.sweet :refer [api]]
-            [hack-news.routes :refer [post-entity-routes]]
+            [core.routes :refer [post-entity-routes]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [hack-news.config :as config]
+            [core.config :as config]
             [clojure.tools.nrepl.server :as nrepl]
             [clojure.tools.logging :as log])
   (:gen-class))
@@ -17,5 +17,5 @@
   (nrepl/start-server :bind "0.0.0.0" :port 12345)
   (log/info :a2)
   (db/set-default-db-connection! config/db-spec)
-  (models/set-root-namespace! 'hack-news.models)
+  (models/set-root-namespace! 'core.models)
   (run-jetty app {:port 3000}))
