@@ -20,6 +20,6 @@
                  [clj-http "3.10.0"]
                  [org.clojure/data.json "0.2.7"]]
 
-  :repl-options {:init-ns hack-news.core
+  :repl-options {:init-ns core.main
                  :init (-main)}
-  :init-ns hack-news.core)
+  :init-ns core.main)

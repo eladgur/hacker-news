@@ -1,4 +1,4 @@
-(ns hack-news.string-util
+(ns core.util.string-util
   (:require [clojure.string :as str]))
 
 (def non-blank? (complement str/blank?))
