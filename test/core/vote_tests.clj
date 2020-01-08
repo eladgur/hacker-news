@@ -7,7 +7,7 @@
   (let [votes (get-in (hc/find-by-id id) [:body :votes])]
     (is (= votes expected-votes))))
 
-(deftest update-test
+(deftest vote-test
   (let [post {:author "Author"
               :text   "Text"}
         id (tu/create-post post)

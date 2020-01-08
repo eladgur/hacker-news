@@ -1,6 +1,7 @@
 (ns core.cache
   (:require [toucan.db :as db]
-            [core.models :refer [Post]]))
+            [core.models :refer [Post]]
+            [clojure.tools.logging :as log]))
 
 (def page-size 30)
 
@@ -11,3 +12,8 @@
              :limit    page-size}))
 
 (defonce top-posts (atom (get-top-posts-from-db)))
+
+(defn update! []
+  (log/info ::update! {:status :start})
+  (reset! top-posts (get-top-posts-from-db))
+  (log/info ::update! {:status :end}))

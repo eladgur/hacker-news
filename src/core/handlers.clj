@@ -7,28 +7,40 @@
             [core.util.string-util :as str]
             [clj-time.coerce :as tc]
             [clj-time.core :as t]
-            [honeysql.core :as hsql]))
+            [honeysql.core :as hsql]
+            [core.cache :as cache]))
 
-(defn id->created [name {:keys [id] :as m}]
-  (created (str "/" name "/" id) m))
+(defn id->created [{:keys [id] :as m}]
+  (created (str "/posts/" id) m))
 
 (defn find-by-id-handler [id]
   (if-let [post (Post id)]
     (ok post)
     (not-found)))
 
+(defn calc-score [post-creation-date votes]
+  (let [curr-date (t/now)
+        days-from-now (t/in-days (t/interval curr-date post-creation-date))
+        date-score (* 1000 days-from-now)
+        vote-score votes]
+    (- vote-score date-score)))
+
 (defn req-body->post [req-body]
   (let [date (t/now)
         timestamp (tc/to-timestamp date)
-        votes 0]
+        votes 0
+        score (calc-score date votes)]
     (assoc req-body :created_on timestamp
-                    :votes votes)))
+                    :votes votes
+                    :score score)))
+
+(defn update-cache-async! []
+  (future (cache/update!)))
 
 (defn create-handler [req-body]
-  (->> req-body
-       (req-body->post)
-       (db/insert! Post)
-       (id->created "posts")))
+  (if-let [{:keys [id] :as post} (db/insert! Post (req-body->post req-body))]
+    (do (update-cache-async!)
+        (created (str "/posts/" id) post))))
 
 (defn update-handler [{:keys [id] :as req-body}]
   (if (db/update! Post id req-body)
@@ -36,14 +48,14 @@
          :status :updated})
     (not-found)))
 
-(defn upvote-handler [{:keys [id] :as req-body}]
-  (if (db/update! Post id {:votes (hsql/call :+ :votes 1)})
-    (ok {:id     id
-         :status :up-voted})
-    (not-found)))
+(defn update-post-votes! [id hsql-op]
+  (when (db/update! Post id {:votes (hsql/call hsql-op :votes 1)})
+    {:id     id
+     :status :votes-updated}))
 
-(defn downvote-handler [{:keys [id] :as req-body}]
-  (if (db/update! Post id {:votes (hsql/call :- :votes 1)})
-    (ok {:id     id
-         :status :down-voted})
+(defn vote-handler [{:keys [id] :as req-body} vote-type]
+  (if-let [return-map (update-post-votes! id vote-type)]
+    (do
+      (update-cache-async!)
+      (ok return-map))
     (not-found)))

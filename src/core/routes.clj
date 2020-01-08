@@ -39,8 +39,8 @@
 
         (POST upvote-endpoint http-req
           :body [req-body OnlyIdSchema]
-          (handlers/upvote-handler req-body))
+          (handlers/vote-handler req-body :+))
 
         (POST downvote-endpoint http-req
           :body [req-body OnlyIdSchema]
-          (handlers/downvote-handler req-body))]))
+          (handlers/vote-handler req-body :-))]))
