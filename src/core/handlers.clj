@@ -20,7 +20,7 @@
 
 (defn calc-score [post-creation-date votes]
   (let [curr-date (t/now)
-        days-from-now (t/in-days (t/interval curr-date post-creation-date))
+        days-from-now (t/in-days (t/interval post-creation-date curr-date))
         date-score (* 1000 days-from-now)
         vote-score votes]
     (- vote-score date-score)))
@@ -59,3 +59,6 @@
       (update-cache-async!)
       (ok return-map))
     (not-found)))
+
+(defn top-posts []
+  (ok (cache/get-top-posts)))
