@@ -7,16 +7,10 @@
             [core.config :as config]))
 
 (def max-text-size 1000)
-(def find-by-id-endpoint "/api/posts/find-by-id")
+(def find-by-id-endpoint "/api/posts/:id")
 (def create-and-update-endpoint "/api/posts")
 (def upvote-endpoint "/api/posts/upvote")
 (def downvote-endpoint "/api/posts/downvote")
-(def base-url "http://localhost:3000")
-
-(def find-by-id-url (str base-url find-by-id-endpoint))
-(def create-and-update-url (str base-url create-and-update-endpoint))
-(def upvote-url (str base-url upvote-endpoint))
-(def downvote-url (str base-url downvote-endpoint))
 
 (s/defschema OnlyIdSchema
   {:id s/Int})
@@ -31,9 +25,9 @@
 
 (def post-entity-routes
   (api {:swagger config/swagger-config}
-       [(POST find-by-id-endpoint http-req
-          :body [req-body OnlyIdSchema]
-          (handlers/find-by-id-handler req-body))
+       [(GET find-by-id-endpoint  [id]
+          :path-params [id :- s/Int]
+          (handlers/find-by-id-handler id))
 
         (POST create-and-update-endpoint http-req
           :body [req-body CreateSchema]

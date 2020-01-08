@@ -1,13 +1,13 @@
 (ns core.create-test
   (:require [clojure.test :refer :all]
-            [core.util.test-util :as tu]))
+            [core.util.http-client :as hc]))
 
 (deftest create-test
   (let [d-author "dummy author"
         d-text "dummay text"
         post {:author d-author
               :text   d-text}
-        {:keys [status body]} (tu/create! post)
+        {:keys [status body]} (hc/create! post)
         {:keys [votes text id author create_on]} body]
 
     (are [actual expected] (= actual expected)

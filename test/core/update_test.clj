@@ -1,6 +1,6 @@
 (ns core.update-test
   (:require [clojure.test :refer :all]
-            [clj-http.client :as client]
+            [core.util.http-client :as hc]
             [core.util.test-util :as tu]))
 
 (defn assert-update-response-body [post-id {:keys [id status] :as response-body}]
@@ -9,7 +9,7 @@
                          id post-id))
 
 (defn assert-updated [post-id expected-author expected-new-text]
-  (let [{:keys [status body]} (tu/find-by-id post-id)
+  (let [{:keys [status body]} (hc/find-by-id post-id)
         {:keys [id author text]} body]
     (are [actual expected] (= actual expected)
                            status 200
@@ -25,7 +25,7 @@
         text "text - after"
         update-info {:id   id
                      :text text}]
-    (->> (tu/update! update-info)
+    (->> (hc/update! update-info)
          :body
          (assert-update-response-body id))
     (assert-updated id author text)))

@@ -12,14 +12,21 @@
 (defn id->created [name {:keys [id] :as m}]
   (created (str "/" name "/" id) m))
 
-(defn find-by-id-handler [{:keys [id]}]
+(defn find-by-id-handler [id]
   (if-let [post (Post id)]
     (ok post)
     (not-found)))
 
+(defn req-body->post [req-body]
+  (let [date (t/now)
+        timestamp (tc/to-timestamp date)
+        votes 0]
+    (assoc req-body :created_on timestamp
+                    :votes votes)))
+
 (defn create-handler [req-body]
-  (->> (assoc req-body :created_on (tc/to-timestamp (t/now))
-                       :votes 0)
+  (->> req-body
+       (req-body->post)
        (db/insert! Post)
        (id->created "posts")))
 
