@@ -3,10 +3,10 @@
             [core.util.http-client :as hc]
             [core.util.test-util :as tu]))
 
-(defn assert-update-response-body [post-id {:keys [id status] :as response-body}]
+(defn assert-update-response-body [expected-id expected-text {:keys [id text] :as response-body}]
   (are [actual expected] (= actual expected)
-                         status "updated"
-                         id post-id))
+                         id expected-id
+                         text expected-text))
 
 (defn assert-updated [post-id expected-author expected-new-text]
   (let [{:keys [status body]} (hc/find-by-id post-id)
@@ -27,7 +27,7 @@
                      :text text}]
     (->> (hc/update! update-info)
          :body
-         (assert-update-response-body id))
+         (assert-update-response-body id text))
     (assert-updated id author text)))
 
 

@@ -2,7 +2,7 @@
   (:require [compojure.api.sweet :refer [GET POST PUT DELETE routes]]
             [toucan.db :as db]
             [schema.core :as s]
-            [ring.util.http-response :refer [ok not-found created]]
+            [ring.util.http-response :refer [ok not-found created internal-server-error]]
             [core.models :refer [Post]]
             [core.util.string-util :as str]
             [clj-time.coerce :as tc]
@@ -10,12 +10,9 @@
             [honeysql.core :as hsql]
             [core.cache :as cache]))
 
-(defn id->created [{:keys [id] :as m}]
-  (created (str "/posts/" id) m))
-
 (defn find-by-id-handler [id]
   (if-let [post (Post id)]
-    (ok post)
+    (ok (select-keys post [:id :author :text :votes]))
     (not-found)))
 
 (defn calc-score [post-creation-date votes]
@@ -40,12 +37,13 @@
 (defn create-handler [req-body]
   (if-let [{:keys [id] :as post} (db/insert! Post (req-body->post req-body))]
     (do (update-cache-async!)
-        (created (str "/posts/" id) post))))
+        (->> (select-keys post [:id :text :votes :author])
+             (created (str "/posts/" id))))
+    (internal-server-error)))
 
 (defn update-handler [{:keys [id] :as req-body}]
   (if (db/update! Post id req-body)
-    (ok {:id     id
-         :status :updated})
+    (ok req-body)
     (not-found)))
 
 (defn update-post-votes! [id hsql-op]
@@ -61,4 +59,6 @@
     (not-found)))
 
 (defn top-posts []
-  (ok (cache/get-top-posts)))
+  (if-let [posts (cache/get-top-posts)]
+    (ok (map #(select-keys % [:id :text :votes]) posts))
+    (internal-server-error)))
