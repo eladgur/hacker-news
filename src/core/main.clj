@@ -13,9 +13,7 @@
 (def app (wrap-reload #'post-entity-routes))
 
 (defn -main [& args]
-  (log/info :a)
   (nrepl/start-server :bind "0.0.0.0" :port 12345)
-  (log/info :a2)
   (db/set-default-db-connection! config/db-spec)
   (models/set-root-namespace! 'core.models)
   (run-jetty app {:port 3000}))
