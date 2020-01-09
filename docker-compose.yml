@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  app:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+      - 3000:3000
+      - 12345:12345
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+    driver: local

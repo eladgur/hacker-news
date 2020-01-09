@@ -1,7 +1,8 @@
 (ns core.config)
 
 (def db-spec
-  {:dbtype   "postgres"
+  {:host     "db"
+   :dbtype   "postgres"
    :dbname   "postgres"
    :user     "postgres"
    :password "postgres"})

@@ -16,4 +16,5 @@
   (nrepl/start-server :bind "0.0.0.0" :port 12345)
   (db/set-default-db-connection! config/db-spec)
   (models/set-root-namespace! 'core.models)
-  (run-jetty app {:port 3000}))
+  (run-jetty app {:port 3000})
+  (log/info "swager-api available at: http://localhost:3000/swagger/index.html"))
