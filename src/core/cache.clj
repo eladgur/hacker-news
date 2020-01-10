@@ -5,15 +5,13 @@
             [core.config :as config]))
 
 (def page-size 30)
-;(db/set-default-db-connection! config/db-spec)
+(defonce ^:private top-posts (atom []))
 
 (defn- get-top-posts-from-db []
   (db/query {:select   [:*]
              :from     [Post]
              :order-by [:score]
              :limit    page-size}))
-
-(defonce ^:private top-posts (atom []))
 
 (defn update! []
   (log/info ::update!)

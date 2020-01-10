@@ -12,7 +12,7 @@
                  [toucan "1.1.9"]
                  [org.postgresql/postgresql "42.2.4"]
 
-                 ; Testing
+                 ; Utils
                  [clj-http "3.10.0"]
                  [org.clojure/data.json "0.2.7"]]
 
