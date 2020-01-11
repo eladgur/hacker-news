@@ -1,6 +1,9 @@
 (ns core.create-test
   (:require [clojure.test :refer :all]
-            [core.util.http-client :as hc]))
+            [core.util.http-client :as hc]
+            [core.util.test-util :as tu]))
+
+(use-fixtures :once tu/test-fixture)
 
 (deftest create-test
   (let [d-author "dummy author"

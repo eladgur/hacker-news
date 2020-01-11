@@ -6,19 +6,13 @@
             [core.models :refer [Post]]
             [core.cache :as cache]))
 
+(use-fixtures :once tu/test-fixture)
 
 (defn ->post [x]
   (let [text (str "dummy" x)
         post {:author text
               :text   text}]
     (tu/create-post post)))
-
-(defn vote-3-times [id]
-  (let [m-id {:id id}]
-    (doall (repeat 3 #(hc/upvote m-id)))))
-
-(defn delete-from-db [ids]
-  (map #(db/delete! Post :id %) ids))
 
 (defn contains-same-elements? [actual expected]
   (let [actual-set (into #{} actual)

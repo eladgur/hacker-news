@@ -3,6 +3,8 @@
             [core.util.http-client :as hc]
             [core.util.test-util :as tu]))
 
+(use-fixtures :once tu/test-fixture)
+
 (defn assert-num-of-votes [id expected-votes]
   (let [votes (get-in (hc/find-by-id id) [:body :votes])]
     (is (= votes expected-votes))))

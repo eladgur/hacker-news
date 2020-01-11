@@ -3,6 +3,8 @@
             [core.util.http-client :as hc]
             [core.util.test-util :as tu]))
 
+(use-fixtures :once tu/test-fixture)
+
 (defn assert-update-response-body [expected-id expected-text {:keys [id text] :as response-body}]
   (are [actual expected] (= actual expected)
                          id expected-id
