@@ -31,12 +31,9 @@
                     :votes votes
                     :score score)))
 
-(defn update-cache-async! []
-  (future (cache/update!)))
-
 (defn create-handler [req-body]
   (if-let [{:keys [id] :as post} (db/insert! Post (req-body->post req-body))]
-    (do (update-cache-async!)
+    (do (cache/update-async!)
         (->> (select-keys post [:id :text :votes :author])
              (created (str "/posts/" id))))
     (internal-server-error)))
@@ -54,7 +51,7 @@
 (defn vote-handler [{:keys [id] :as req-body} vote-type]
   (if-let [return-map (update-post-votes! id vote-type)]
     (do
-      (update-cache-async!)
+      (cache/update-async!)
       (ok return-map))
     (not-found)))
 
